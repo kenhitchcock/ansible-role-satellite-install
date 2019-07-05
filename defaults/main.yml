@@ -1,3 +1,8 @@
 ---
 
 default_manifest_file_path: manifest.zip
+satellite_organization: "Example Org"
+satellite_location: "DataCenter"
+satellite_username: "admin"
+satellite_password: "password"
+
