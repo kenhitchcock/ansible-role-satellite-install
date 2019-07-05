@@ -12,17 +12,20 @@ Role Variables
 --------------
 
 ```
+# Scenario determines if we are deploying a satellite or capsule
+# Only accepted options are satellite and capsule
+satellite_scenario: satellite
+
+# Manifest file needs to be generated and downloaded before this
+# role is executed.
 manifest_file_path: <path to the downloaded manifest-....zip file>
+
+# Satellite basic configuration values
 satellite_organization: <organization name>
 satellite_location: <location of the Satellite server>
 satellite_username: <admin username to be set>
 satellite_password: <admin password to be set>
 
-satellite_repositories: <list of dicts describing the repos to enable - see example below>
-
-satellite_sync_plan: <name of new sync plan>
-
-satellite_activation_keys: <dict of new keys to add, and a subscription to add to each>
 
 ```
 
@@ -47,26 +50,6 @@ satellite_location: "DataCenter"
 satellite_username: "admin"
 satellite_password: "admin01"
 
-satellite_repositories:
-- product: "Red Hat Enterprise Linux Server"
-  name: "Red Hat Enterprise Linux 7 Server (RPMs)"
-  release_version:
-  - "7.3"
-  - "7Server"
-  base_arch: "x86_64"
-- product: "Red Hat OpenShift Container Platform"
-  name: "Red Hat OpenShift Container Platform 3.5 (RPMs)"
-  release_version: []
-  base_arch: "x86_64"
-
-satellite_sync_plan: "MyPlan"
-
-satellite_activation_keys:
-  rhel-7
-    subscription: "RHEL subscription"
-  rhel-7-test:
-    subscription: "RHEL subscription"
-
 ```
 
 License
@@ -77,5 +60,5 @@ Apache License 2.0
 
 Author Information
 ------------------
-
+Originally written by the below, further enhanced by Ken Hitchcock
 Red Hat Community of Practice & staff of the Red Hat Open Innovation Labs.
