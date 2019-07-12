@@ -36,7 +36,7 @@ Example Playbook
 - name: 'Configure Satellite'
   hosts: satellite-server
   roles:
-  - role: ansible-role-satelliteinstall
+  - role: ansible-role-satellite-install
 ```
 
 Example Inventory
