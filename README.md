@@ -1,12 +1,12 @@
-Satellite
-=========
+Satellite Install
+=================
 
-This role takes care of installing Red Hat Satellite.
+This role takes care of installing Red Hat Satellite. In either connected or disconnected mode.
 
 Requirements
 ------------
 
-- Host needs to be subscribed and the correct repos enabled before running this role.
+- Host needs to be subscribed and the correct repos enabled before running this role. This only required if you are installing in connected mode.
 
 Role Variables
 --------------
@@ -25,6 +25,27 @@ satellite_organization: <organization name>
 satellite_location: <location of the Satellite server>
 satellite_username: <admin username to be set>
 satellite_password: <admin password to be set>
+
+# Satellite can be installed in connected or disconnected mode. Below are the variable with their default values.
+## Is the install disconnected?
+satellite_disconnected: 'no'
+
+## If disconnected, what are the iso file names?
+satellite_iso_name: 'satellite-6.6.0-rhel-7-x86_64-dvd.iso'
+satellite_rhel_iso_name: 'rhel-server-7.7-x86_64-dvd.iso'
+
+## If disconnected where will the iso images be mounted?
+satellite_rhel_mount_location: '/media/rhel7-server'
+satellite_sat_mount_location: '/media/sat6'
+
+## If disconnected, where are the ISO files stored?
+satellite_pull_from_webserver: 'no'
+satellite_iso_webserver: "http://webserver"
+satellite_iso_file_location: '../files'
+
+## Where will the ISO files be saved? Defaults to /var/pulp as it has the largest storage on a Satellite 6 install.
+satellite_iso_dest_dir: '/var/pulp'
+satellite_iso_mnt_dir: '/mnt/'
 
 
 ```
@@ -49,6 +70,7 @@ satellite_organization: "Example Org
 satellite_location: "DataCenter"
 satellite_username: "admin"
 satellite_password: "admin01"
+satellite_disconnected: 'no'
 
 ```
 

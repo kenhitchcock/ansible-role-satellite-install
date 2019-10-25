@@ -1,5 +1,26 @@
 ---
 
-- import_tasks: "prereq.yml"
-- import_tasks: "install.yml"
-- import_tasks: "manifest.yml"
+- block:
+
+    - name: "Pre Reqs required to install satellite in disconnect mode."
+      include_tasks: disconnected-prereqs.yml
+      tags: [disconnected]
+      when: 
+        - "satellite_disconnected == 'yes'"
+        - "satellite_scenario == 'satellite'"
+
+    - name: "Pre Reqs required to install satellite in connected mode."
+      include_tasks: "connected-prereq.yml"
+      when:
+        - "satellite_disconnected == 'yes'" 
+        - "satellite_scenario == 'satellite'"
+
+    - name: "Running the satellite installation."
+      include_tasks: "install.yml"
+      when: "satellite_scenario == 'satellite'"
+
+    - name: "Uploading manifest file into satellite."
+      include_tasks: "manifest.yml"
+      when: "satellite_scenario == 'satellite'"
+      
+  become: true

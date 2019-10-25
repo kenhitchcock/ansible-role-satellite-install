@@ -1,5 +1,16 @@
 ---
 
+satellite_disconnected: 'no'
+satellite_iso_name: 'satellite-6.6.0-rhel-7-x86_64-dvd.iso'
+satellite_rhel_iso_name: 'rhel-server-7.7-x86_64-dvd.iso'
+satellite_rhel_mount_location: '/media/rhel7-server'
+satellite_sat_mount_location: '/media/sat6'
+satellite_pull_from_webserver: 'no'
+satellite_iso_webserver: "http://webserver"
+satellite_iso_file_location: '../files'
+satellite_iso_dest_dir: '/var/pulp'
+satellite_iso_mnt_dir: '/mnt/'
+
 default_manifest_file_path: manifest.zip
 satellite_organization: "Example Org"
 satellite_location: "DataCenter"

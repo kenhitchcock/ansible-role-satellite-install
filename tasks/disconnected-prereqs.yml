@@ -1,0 +1,133 @@
+---
+
+#Copy ISO files from either webserver or file system somewhere
+- name: "Copy Satellite ISO to Satellite server from internal web server."
+  get_url:
+    url: "{{ satellite_iso_webserver }}/{{ satellite_iso_name }}"
+    dest: "{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
+    mode: '0640'
+  when: 
+    - "satellite_disconnected == 'yes'"
+    - "satellite_pull_from_webserver == 'yes'"
+
+- name: "Copy RHEL ISO to Satellite server from internal web server."
+  get_url:
+    url: "{{ satellite_iso_webserver }}/{{ satellite_rhel_iso_name }}"
+    dest: "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
+    mode: '0640'
+  when: 
+    - "satellite_disconnected == 'yes'"
+    - "satellite_pull_from_webserver == 'yes'"
+
+- name: "Copy Satellite ISO from local filesystem to satellite"
+  copy:
+    src: "{{ satellite_iso_file_location }}/{{ satellite_iso_name }}"
+    dest: "{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
+    mode: '0640'
+  when: 
+    - "satellite_disconnected == 'yes'"
+    - "satellite_pull_from_webserver == 'no'"
+
+- name: "Copy RHEL ISO from local filesystem to satellite"
+  copy:
+    src: "{{ satellite_iso_file_location }}/{{ satellite_rhel_iso_name }}"
+    dest: "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
+    mode: '0640'
+  when: 
+    - "satellite_disconnected == 'yes'"
+    - "satellite_pull_from_webserver == 'no'"
+
+# Checks to see if the ISO files manage to copy correctly.
+- name: "Check if RHEL ISO exists."
+  stat: 
+    path:  "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
+  register: rheliso
+
+- name: "Check if Satellite ISO exists."
+  stat: 
+    path:  "{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
+  register: satiso
+
+# Checks if mount directories exist
+- name: "Check if directory exists"
+  stat: 
+    path:  "{{ satellite_rhel_mount_location }}"
+  register: rheldir
+
+- name: "Create directory to mount RHEL ISO file."
+  file:
+    path: "{{ satellite_rhel_mount_location }}"
+    state: directory
+  when: 
+    - rheldir.stat.exists == false  
+
+# Mount RHEL ISO and copy repo file to yum.repos.d, finally then configures the repo file to use the mount ISO file.
+- name: "Mounts RHEL7 ISO for system update."
+  mount:
+    path: "{{ satellite_rhel_mount_location }}"
+    src: "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
+    fstype: iso9660
+    opts: ro,noauto
+    state: present
+  when:
+    - rheliso.stat.exists == true
+
+- name: "Copy RHEL ISO Repo file /etc/yum.repos.d/"
+  copy:
+    src: "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
+    dest: "/etc/yum.repos.d/rhel7-server.repo"
+    mode: '0640'
+  when:
+    - rheliso.stat.exists == true
+
+# - name: "Replace baseurl of repo file with mounted location of rhel iso."
+#   lineinfile: 
+#baseurl=file:///media/rhel7-server/
+
+# Mount satellite ISO
+- name: "Check if Satellite mount dir exists"
+  stat: 
+    path:  "{{ satellite_sat_mount_location }}"
+  register: satdir
+
+- name: "Create directory to mount Satellite ISO file."
+  file:
+    path: "{{ satellite_sat_mount_location }}"
+    state: directory
+  when: 
+    - satdir.stat.exists == false  
+
+- name: "Mounts Satellite 6 ISO."
+  mount:
+    path: "{{ satellite_sat_mount_location }}"
+    src: "{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
+    fstype: iso9660
+    opts: ro,noauto
+    state: present
+  when:
+    - satiso.stat.exists == true
+
+# Import RPM GPG key
+- name: "Import Red Hat key"
+  rpm_key:
+    state: present
+    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+# System must be updated to latest level.
+- name: "Update all packages using mounted ISO files"
+  yum:
+    name: '*'
+    state: latest
+
+# Satellite packages now installed from mounted ISO.
+- name: "Install Satellite packages from mount Sat ISO."
+  shell: |
+         cd /media/sat6/
+         ./install_packages
+  register: script_output
+  when:
+    - satiso.stat.exists == true
+
+- name: "Output from script"
+  debug:
+    msg: "{{script_output}}"
