@@ -11,6 +11,10 @@ satellite_iso_file_location: '../files'
 satellite_iso_dest_dir: '/var/pulp'
 satellite_iso_mnt_dir: '/mnt/'
 
+# This is the default value put in the RHEL ISO repo file. 
+# To find this value, mount the ISO and edit the media.repo file
+satellite_repo_name: "name=Red Hat Enterprise Linux 7.7"
+
 default_manifest_file_path: manifest.zip
 satellite_organization: "Example Org"
 satellite_location: "DataCenter"

@@ -80,9 +80,19 @@
   when:
     - rheliso.stat.exists == true
 
-# - name: "Replace baseurl of repo file with mounted location of rhel iso."
-#   lineinfile: 
-#baseurl=file:///media/rhel7-server/
+- name: "Check if Repo file exists."
+  stat: 
+    path:  "/etc/yum.repos.d/rhel7-server.repo"
+  register: repofile
+
+- name: "Replace baseurl of repo file with mounted location of rhel iso."
+  lineinfile: 
+    path: /etc/yum.repos.d/rhel7-server.repo
+    regexp: "^baseurl=file://{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
+    line: "baseurl=file://{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
+    insertafter: "^{{ satellite_repo_name }}"
+  when:
+    - repofile.stat.exists == true
 
 # Mount satellite ISO
 - name: "Check if Satellite mount dir exists"
