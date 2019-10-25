@@ -100,7 +100,7 @@
 
 - name: "Copy RHEL ISO Repo file /etc/yum.repos.d/"
   copy:
-    src: "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
+    src: "{{ satellite_rhel_mount_location }}/media.repo"
     dest: "/etc/yum.repos.d/rhel7-server.repo"
     mode: '0640'
   when:
