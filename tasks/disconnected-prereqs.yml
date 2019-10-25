@@ -11,42 +11,57 @@
   when: 
     - uploaddir.stat.exists == false  
 
+- name: "Check if RHEL ISO exists."
+  stat: 
+    path:  "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
+  register: rheliso
+
+- name: "Check if Satellite ISO exists."
+  stat: 
+    path:  "{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
+  register: satiso
+
 #Copy ISO files from either webserver or file system somewhere
+
 - name: "Copy Satellite ISO to Satellite server from internal web server."
   get_url:
     url: "{{ satellite_iso_webserver }}/{{ satellite_iso_name }}"
     dest: "{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
-    mode: '0640'
+    mode: '0755'
   when: 
     - "satellite_disconnected == 'yes'"
     - "satellite_pull_from_webserver == 'yes'"
+    - satiso.stat.exists == false
 
 - name: "Copy RHEL ISO to Satellite server from internal web server."
   get_url:
     url: "{{ satellite_iso_webserver }}/{{ satellite_rhel_iso_name }}"
     dest: "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
-    mode: '0640'
+    mode: '0755'
   when: 
     - "satellite_disconnected == 'yes'"
     - "satellite_pull_from_webserver == 'yes'"
+    - rheliso.stat.exists == false
 
 - name: "Copy Satellite ISO from local filesystem to satellite"
   copy:
     src: "{{ satellite_iso_file_location }}/{{ satellite_iso_name }}"
     dest: "{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
-    mode: '0640'
+    mode: '0755'
   when: 
     - "satellite_disconnected == 'yes'"
     - "satellite_pull_from_webserver == 'no'"
+    - satiso.stat.exists == false
 
 - name: "Copy RHEL ISO from local filesystem to satellite"
   copy:
     src: "{{ satellite_iso_file_location }}/{{ satellite_rhel_iso_name }}"
     dest: "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
-    mode: '0640'
+    mode: '0755'
   when: 
     - "satellite_disconnected == 'yes'"
     - "satellite_pull_from_webserver == 'no'"
+    - rheliso.stat.exists == false
 
 # Checks to see if the ISO files manage to copy correctly.
 - name: "Check if RHEL ISO exists."
