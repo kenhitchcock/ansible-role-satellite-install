@@ -102,6 +102,7 @@
   copy:
     src: "{{ satellite_rhel_mount_location }}/media.repo"
     dest: "/etc/yum.repos.d/rhel7-server.repo"
+    remote_src: "yes"
     mode: '0640'
   when:
     - rheliso.stat.exists == true
