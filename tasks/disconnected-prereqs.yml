@@ -115,8 +115,8 @@
 - name: "Replace baseurl of repo file with mounted location of rhel iso."
   lineinfile: 
     path: /etc/yum.repos.d/rhel7-server.repo
-    regexp: "^baseurl=file://{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
-    line: "baseurl=file://{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
+    regexp: "^baseurl=file://{{ satellite_rhel_mount_location }}"
+    line: "baseurl=file://{{ satellite_rhel_mount_location }}"
     insertafter: "^{{ satellite_repo_name }}"
   when:
     - repofile.stat.exists == true
