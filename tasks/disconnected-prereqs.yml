@@ -93,8 +93,8 @@
     path: "{{ satellite_rhel_mount_location }}"
     src: "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
     fstype: iso9660
-    opts: ro,noauto
-    state: present
+    opts: defaults
+    state: mounted
   when:
     - rheliso.stat.exists == true
 
@@ -138,8 +138,8 @@
     path: "{{ satellite_sat_mount_location }}"
     src: "{{ satellite_iso_dest_dir }}/{{ satellite_iso_name }}"
     fstype: iso9660
-    opts: ro,noauto
-    state: present
+    opts: defaults
+    state: mounted
   when:
     - satiso.stat.exists == true
 
