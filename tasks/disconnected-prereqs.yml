@@ -1,4 +1,15 @@
 ---
+- name: "Check if upload directory exists"
+  stat: 
+    path:  "{{ satellite_iso_dest_dir }}"
+  register: uploaddir
+
+- name: "Create directory to upload ISO files to."
+  file:
+    path: "{{ satellite_iso_dest_dir }}"
+    state: directory
+  when: 
+    - uploaddir.stat.exists == false  
 
 #Copy ISO files from either webserver or file system somewhere
 - name: "Copy Satellite ISO to Satellite server from internal web server."
