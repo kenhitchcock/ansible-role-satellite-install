@@ -88,6 +88,11 @@
     - rheldir.stat.exists == false  
 
 # Mount RHEL ISO and copy repo file to yum.repos.d, finally then configures the repo file to use the mount ISO file.
+- name: "Disable all RHSM repositories"
+  rhsm_repository:
+    name: '*'
+    state: disabled
+
 - name: "Mounts RHEL7 ISO for system update."
   mount:
     path: "{{ satellite_rhel_mount_location }}"
