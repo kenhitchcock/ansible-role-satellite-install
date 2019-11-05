@@ -11,6 +11,13 @@ satellite_iso_file_location: '../files'
 satellite_iso_dest_dir: '/var/pulp'
 satellite_iso_mnt_dir: '/mnt/'
 
+# Extra vars to potentially change where rhel iso are stored and copied from.
+satellite_rhel_iso_webserver: "http://webserver"
+satellite_rhel_iso_file_location: '../files'
+satellite_rhel_iso_dest_dir: '/var/pulp'
+
+# If satellite is being installed into aws and in disconnected mode, set this to yes.
+satellite_useaws: "no"
 # This is the default value put in the RHEL ISO repo file. 
 # To find this value, mount the ISO and edit the media.repo file
 satellite_repo_name: "name=Red Hat Enterprise Linux 7.7"
@@ -20,16 +27,4 @@ satellite_organization: "Example Org"
 satellite_location: "DataCenter"
 satellite_username: "admin"
 satellite_password: "password"
-
-rhsm_repos:
-  rhel-7-server-rpms:
-    enable: true
-  rhel-server-rhscl-7-rpms:
-    enable: true
-  rhel-7-server-satellite-6.5-rpms:
-    enable: true
-  rhel-7-server-satellite-maintenance-6-rpms:
-    enable: true
-  rhel-7-server-ansible-2.8-rpms:
-    enable: true
 

@@ -11,9 +11,21 @@
   when: 
     - uploaddir.stat.exists == false  
 
+- name: "Check if rhel upload directory exists"
+  stat: 
+    path:  "{{ satellite_rhel_iso_dest_dir }}"
+  register: rheluploaddir
+
+- name: "Create directory to upload rhel ISO files to."
+  file:
+    path: "{{ satellite_rhel_iso_dest_dir }}"
+    state: directory
+  when: 
+    - rheluploaddir.stat.exists == false  
+
 - name: "Check if RHEL ISO exists."
   stat: 
-    path:  "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
+    path:  "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
   register: rheliso
 
 - name: "Check if Satellite ISO exists."
@@ -35,8 +47,8 @@
 
 - name: "Copy RHEL ISO to Satellite server from internal web server."
   get_url:
-    url: "{{ satellite_iso_webserver }}/{{ satellite_rhel_iso_name }}"
-    dest: "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
+    url: "{{ satellite_rhel_iso_webserver }}/{{ satellite_rhel_iso_name }}"
+    dest: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
     mode: '0755'
   when: 
     - "satellite_disconnected == 'yes'"
@@ -55,8 +67,8 @@
 
 - name: "Copy RHEL ISO from local filesystem to satellite"
   copy:
-    src: "{{ satellite_iso_file_location }}/{{ satellite_rhel_iso_name }}"
-    dest: "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
+    src: "{{ satellite_rhel_iso_file_location }}/{{ satellite_rhel_iso_name }}"
+    dest: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
     mode: '0755'
   when: 
     - "satellite_disconnected == 'yes'"
@@ -66,7 +78,7 @@
 # Checks to see if the ISO files manage to copy correctly.
 - name: "Check if RHEL ISO exists."
   stat: 
-    path:  "{{ satellite_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
+    path:  "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_rhel_iso_name }}"
   register: rheliso
 
 - name: "Check if Satellite ISO exists."
@@ -92,6 +104,40 @@
   rhsm_repository:
     name: '*'
     state: disabled
+  ignore_errors: true
+
+- name: "Upgrade packages required by satellite installer."
+  yum:
+    name: "{{item}}"
+    state: latest
+  ignore_errors: true
+  loop:
+    - selinux-policy
+  
+
+- name: "Clean up AWS amazon instance if using satellite"
+  block:
+    - name: "Remove amazon packages"
+      yum:
+        name: 'rh-amazon-rhui-client*'
+        state: absent
+
+    - name: "yum clean all"
+      command: yum clean all
+      args:
+        warn: no
+      ignore_errors: true
+
+    - name: "Update pluginconf.d/product-id.conf"
+      copy:
+        src: "files/product-id.conf"
+        dest: /etc/yum/pluginconf.d/product-id.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+  when:
+    - 'satellite_useaws == "yes"'
 
 - name: "Mounts RHEL7 ISO for system update."
   mount:
