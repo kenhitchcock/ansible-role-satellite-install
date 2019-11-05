@@ -1,5 +1,5 @@
 ---
-
+satellite_version: '6.6'
 satellite_disconnected: 'no'
 satellite_iso_name: 'satellite-6.6.0-rhel-7-x86_64-dvd.iso'
 satellite_rhel_iso_name: 'rhel-server-7.7-x86_64-dvd.iso'
@@ -10,6 +10,21 @@ satellite_iso_webserver: "http://webserver"
 satellite_iso_file_location: '../files'
 satellite_iso_dest_dir: '/var/pulp'
 satellite_iso_mnt_dir: '/mnt/'
+
+##############################################################################
+# Workaround for the dep issues in satellite 6.6 disconnected install bug    #
+# This requires a zip file to be created of all the missing files not in     #
+# the satellite install repository.                                          #
+# A repo will then need to be created of all the files.                      #
+# A yum repo file then needs to be created and copied into thezip directory. #
+############################################################################## 
+satellite_workaround: 'yes'
+satellite_6.6_workaround_src: '../files'
+satellite_6.6_workaround_zipname: 'sat-deps-missing.zip'
+satellite_6.6_workaround_extracted_dir: '/opt'
+satellite_6.6_workaround_yumrepofile: 'sat-deps.repo'
+##############################################################################
+
 
 # Extra vars to potentially change where rhel iso are stored and copied from.
 satellite_rhel_iso_webserver: "http://webserver"
