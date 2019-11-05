@@ -13,6 +13,7 @@ satellite_iso_mnt_dir: '/mnt/'
 
 ##############################################################################
 # Workaround for the dep issues in satellite 6.6 disconnected install bug    #
+# https://bugzilla.redhat.com/show_bug.cgi?id=1767931                        #
 # This requires a zip file to be created of all the missing files not in     #
 # the satellite install repository.                                          #
 # A repo will then need to be created of all the files.                      #
