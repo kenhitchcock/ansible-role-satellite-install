@@ -20,6 +20,8 @@ satellite_iso_mnt_dir: '/mnt/'
 # A yum repo file then needs to be created and copied into thezip directory. #
 ############################################################################## 
 satellite_workaround: 'yes'
+satellite_6_6_workaround_webserver: 'http://webserver'
+satellite_6_6_workaround_dest_dir:  '/var/pulp'
 satellite_6_6_workaround_src: '../files'
 satellite_6_6_workaround_zipname: 'sat-deps-missing.zip'
 satellite_6_6_workaround_extracted_dir: '/opt'
@@ -29,7 +31,7 @@ satellite_6_6_workaround_yumrepofile: 'sat-deps.repo'
 
 
 # Extra vars to potentially change where rhel iso are stored and copied from.
-satellite_rhel_iso_webserver: "http://webserver"
+satellite_rhel_iso_webserver: 'http://webserver'
 satellite_rhel_iso_file_location: '../files'
 satellite_rhel_iso_dest_dir: '/var/pulp'
 

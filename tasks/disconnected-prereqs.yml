@@ -35,7 +35,7 @@
 
 - name: "Check if Workaround zip exists."
   stat: 
-    path:  "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
+    path:  "{{ satellite_6_6_workaround_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
   register: sat66workaround
 
 #Copy ISO files from either webserver or file system somewhere
@@ -63,8 +63,8 @@
 # Workaround for Satellite 6_6 disconnected install not working.
 - name: "Copy Missing Deps zip file to Satellite server from internal web server."
   get_url:
-    url: "{{ satellite_rhel_iso_webserver }}/{{ satellite_6_6_workaround_zipname }}"
-    dest: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
+    url: "{{ satellite_6_6_workaround_webserver }}/{{ satellite_6_6_workaround_zipname }}"
+    dest: "{{ satellite_6_6_workaround_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
     mode: '0755'
   when: 
     - "satellite_version == 6.6"
@@ -95,8 +95,8 @@
 
 - name: "Copy Satelite 6_6 workaround dep file from local filesystem to satellite"
   copy:
-    src: "{{ satellite_rhel_iso_file_location }}/{{ satellite_6_6_workaround_zipname }}"
-    dest: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
+    src: "{{ satellite_6_6_workaround_src }}/{{ satellite_6_6_workaround_zipname }}"
+    dest: "{{ satellite_6_6_workaround_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
     mode: '0755'
   when: 
     - "satellite_version == 6.6"
@@ -118,7 +118,7 @@
 
 - name: "Check if Workaround zip exists."
   stat: 
-    path:  "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
+    path:  "{{ satellite_6_6_workaround_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
   register: sat66workaround
 
 # Checks if mount directories exist
@@ -241,7 +241,7 @@
 
     - name: "Extract Downloaded zip file for Satellite 6_6 workaround"
       unarchive:
-        src: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
+        src: "{{ satellite_6_6_workaround_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
         dest: "{{ satellite_6_6_workaround_extracted_dir }}"
         remote_src: yes
 
