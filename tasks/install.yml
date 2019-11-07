@@ -2,16 +2,21 @@
 
 - name: "Initialize an empty list for our satellite install params"
   set_fact:
-    satellite_install_cmd: []
+    satellite_install_cmd: ""
+    satellite_install_extra_args: ""
+
+- name: "Debugging string"
+  debug:
+    msg: "{{ satellite_deployment_installer_cmd }}"
 
 - name: "Build List of extra args for satellite installation"
   set_fact:
-    satellite_install_cmd: "{{ satellite_deployment_installer_cmd
-      }} --{{ item.key }}='{{ item.value }}'"
+    satellite_install_extra_args: "{{  satellite_install_extra_args }} --{{ item.key }}='{{ item.value }}'"
   with_dict: "{{ satellite_installs_args }}"
 
-#  loop:
-#    - "{{ satellite_installs_args }}"
+- name: "Build List of extra args for satellite installation"
+  set_fact:
+    satellite_install_cmd: "{{ satellite_deployment_installer_cmd }} {{  satellite_install_extra_args }}"
 
 - name: "Debugging string"
   debug:
@@ -44,6 +49,6 @@
 #  when:
 #   - satellite_version|float >= 6.6
 
-- name: "Output from installer"
-  debug:
-    msg: "{{ satinstalloutput }}"
+#- name: "Output from installer"
+#  debug:
+#    msg: "{{ satinstalloutput }}"

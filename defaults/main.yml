@@ -45,12 +45,18 @@ satellite_location: "DataCenter"
 satellite_username: "admin"
 satellite_password: "password"
 
+# Satellite 6.6. changed these parameters from foreman-admin-* to foreman-initial-admin-* 
+# So to get around the changing landscape i created these two variables that can be overwritten.
+satellite_foreman_adminusername_param: "foreman-initial-admin-username"
+satellite_foreman_adminpassword_param: "foreman-initial-admin-password"
+
 satellite_deployment_installer_cmd: "/usr/sbin/satellite-installer --scenario {{ satellite_scenario }}"
 
+# When overwriting this list, be sure to include the first four lines as is.
 satellite_installs_args:
   "foreman-initial-organization": "{{ satellite_organization }}"
   "foreman-initial-location": "{{ satellite_location }}"
-  "foreman-admin-username": "{{ satellite_username }}"
-  "foreman-admin-password": "{{ satellite_password }}"
+  "{{ satellite_foreman_adminusername_param }}": "{{ satellite_username }}"
+  "{{ satellite_foreman_adminpassword_param }}": "{{ satellite_password }}"
   "foreman-proxy-dns-managed": "false"
   "foreman-proxy-dhcp-managed": "false"
