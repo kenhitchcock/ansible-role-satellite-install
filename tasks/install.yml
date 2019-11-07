@@ -1,12 +1,49 @@
 ---
 
-- name: "Install Satellite with default parameters"
-  command: > 
-    satellite-installer 
-      --scenario "{{ satellite_scenario }}" 
-      --foreman-initial-organization "{{ satellite_organization }}"
-      --foreman-initial-location "{{ satellite_location }}"
-      --foreman-admin-username "{{ satellite_username }}"
-      --foreman-admin-password "{{ satellite_password }}"
-      --foreman-proxy-dns-managed=false
-      --foreman-proxy-dhcp-managed=false
+- name: "Initialize an empty list for our satellite install params"
+  set_fact:
+    satellite_install_cmd: []
+
+- name: "Build List of extra args for satellite installation"
+  set_fact:
+    satellite_install_cmd: "{{ satellite_deployment_installer_cmd
+      }} --{{ item.key }}='{{ item.value }}'"
+  with_dict: "{{ satellite_installs_args }}"
+
+#  loop:
+#    - "{{ satellite_installs_args }}"
+
+- name: "Debugging string"
+  debug:
+    msg: "{{ satellite_install_cmd }}"
+
+- name: "Satellite 6 installation"
+  command: "{{ satellite_install_cmd }}"
+  register: satinstalloutput
+
+
+#- name: "Install Satellite older than 6.6 with default parameters"
+#  command: > 
+#    satellite-installer 
+#      --scenario "{{ satellite_scenario }}" 
+#      --foreman-initial-organization "{{ satellite_organization }}"
+#      --foreman-initial-location "{{ satellite_location }}"
+#      --foreman-admin-username "{{ satellite_username }}"
+#      --foreman-admin-password "{{ satellite_password }}"
+#      "{{ satellite_install_cmd }}"
+#  register: satinstalloutput
+#  when:
+#    - satellite_version|float < 6.6
+
+#- name: "Install Satellite 6.6 with default parameters"
+#  command: > 
+#    satellite-installer 
+#      --scenario "{{ satellite_scenario }}" 
+#      "{{ satellite_install_cmd }}"
+#  register: satinstalloutput
+#  when:
+#   - satellite_version|float >= 6.6
+
+- name: "Output from installer"
+  debug:
+    msg: "{{ satinstalloutput }}"

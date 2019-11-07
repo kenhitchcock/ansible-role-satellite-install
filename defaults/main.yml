@@ -1,5 +1,5 @@
 ---
-satellite_version: '6.6'
+satellite_version: 6.6
 satellite_disconnected: 'no'
 satellite_iso_name: 'satellite-6.6.0-rhel-7-x86_64-dvd.iso'
 satellite_rhel_iso_name: 'rhel-server-7.7-x86_64-dvd.iso'
@@ -12,7 +12,7 @@ satellite_iso_dest_dir: '/var/pulp'
 satellite_iso_mnt_dir: '/mnt/'
 
 ##############################################################################
-# Workaround for the dep issues in satellite 6.6 disconnected install bug    #
+# Workaround for the dep issues in satellite 6_6 disconnected install bug    #
 # https://bugzilla.redhat.com/show_bug.cgi?id=1767931                        #
 # This requires a zip file to be created of all the missing files not in     #
 # the satellite install repository.                                          #
@@ -20,10 +20,11 @@ satellite_iso_mnt_dir: '/mnt/'
 # A yum repo file then needs to be created and copied into thezip directory. #
 ############################################################################## 
 satellite_workaround: 'yes'
-satellite_6.6_workaround_src: '../files'
-satellite_6.6_workaround_zipname: 'sat-deps-missing.zip'
-satellite_6.6_workaround_extracted_dir: '/opt'
-satellite_6.6_workaround_yumrepofile: 'sat-deps.repo'
+satellite_6_6_workaround_src: '../files'
+satellite_6_6_workaround_zipname: 'sat-deps-missing.zip'
+satellite_6_6_workaround_extracted_dir: '/opt'
+satellite_6_6_workaround_extracted_dir_name: 'sat-deps-missing'
+satellite_6_6_workaround_yumrepofile: 'sat-deps.repo'
 ##############################################################################
 
 
@@ -44,3 +45,12 @@ satellite_location: "DataCenter"
 satellite_username: "admin"
 satellite_password: "password"
 
+satellite_deployment_installer_cmd: "/usr/sbin/satellite-installer --scenario {{ satellite_scenario }}"
+
+satellite_installs_args:
+  "foreman-initial-organization": "{{ satellite_organization }}"
+  "foreman-initial-location": "{{ satellite_location }}"
+  "foreman-admin-username": "{{ satellite_username }}"
+  "foreman-admin-password": "{{ satellite_password }}"
+  "foreman-proxy-dns-managed": "false"
+  "foreman-proxy-dhcp-managed": "false"

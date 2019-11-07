@@ -35,7 +35,7 @@
 
 - name: "Check if Workaround zip exists."
   stat: 
-    path:  "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6.6_workaround_zipname }}"
+    path:  "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
   register: sat66workaround
 
 #Copy ISO files from either webserver or file system somewhere
@@ -60,11 +60,11 @@
     - "satellite_pull_from_webserver == 'yes'"
     - rheliso.stat.exists == false
 
-# Workaround for Satellite 6.6 disconnected install not working.
+# Workaround for Satellite 6_6 disconnected install not working.
 - name: "Copy Missing Deps zip file to Satellite server from internal web server."
   get_url:
-    url: "{{ satellite_rhel_iso_webserver }}/{{ satellite_6.6_workaround_zipname }}"
-    dest: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6.6_workaround_zipname }}"
+    url: "{{ satellite_rhel_iso_webserver }}/{{ satellite_6_6_workaround_zipname }}"
+    dest: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
     mode: '0755'
   when: 
     - "satellite_version == '6.6'"
@@ -93,10 +93,10 @@
     - "satellite_pull_from_webserver == 'no'"
     - rheliso.stat.exists == false
 
-- name: "Copy Satelite 6.6 workaround dep file from local filesystem to satellite"
+- name: "Copy Satelite 6_6 workaround dep file from local filesystem to satellite"
   copy:
-    src: "{{ satellite_rhel_iso_file_location }}/{{ satellite_6.6_workaround_zipname }}"
-    dest: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6.6_workaround_zipname }}"
+    src: "{{ satellite_rhel_iso_file_location }}/{{ satellite_6_6_workaround_zipname }}"
+    dest: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
     mode: '0755'
   when: 
     - "satellite_version == '6.6'"
@@ -118,7 +118,7 @@
 
 - name: "Check if Workaround zip exists."
   stat: 
-    path:  "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6.6_workaround_zipname }}"
+    path:  "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
   register: sat66workaround
 
 # Checks if mount directories exist
@@ -140,38 +140,6 @@
     name: '*'
     state: disabled
   ignore_errors: true
-
-# This is to extract and setup the repo for the satellite 6.6 work around.
-- name: "Extract Downloaded zip file for Satellite 6.6 workaround"
-  block: 
- #   - name: "Check if Sat 6.6 workaround directory exists"
- #     stat: 
- #       path:  "{{ satellite_6.6_workaround_extracted_dir }}"
- #     register: sat66workarounddir
-
- #   - name: "Create directory to upload rhel ISO files to."
- #     file:
- #       path: "{{ satellite_rhel_iso_dest_dir }}"
- #       state: directory
- #     when: 
- #       - sat66workarounddir.stat.exists == false  
-
-    - name: "Extract Downloaded zip file for Satellite 6.6 workaround"
-      unarchive:
-        src: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6.6_workaround_zipname }}"
-        dest: "{{ satellite_6.6_workaround_extracted_dir }}"
-        remote_src: yes
-
-    - name: "Copy repo file from Satellite 6.6 workaround to /etc/yum.repo.d/"
-      copy:
-        src: "{{ satellite_6.6_workaround_extracted_dir }}/{{ satellite_6.6_workaround_yumrepofile }}"
-        dest: "/etc/yum.repo.d/{{ satellite_6.6_workaround_yumrepofile }}"
-        remote_src: yes
-  when:
-    - sat66workaround.stat.exists == true
-    - "satellite_version == '6.6'"
-    - "satellite_workaround == 'yes'"
-    - "satellite_disconnected == 'yes'"
 
 - name: "Clean up AWS amazon instance if using satellite"
   block:
@@ -258,6 +226,35 @@
   rpm_key:
     state: present
     key: /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+# This is to extract and setup the repo for the satellite 6_6 work around.
+- name: "Extract Downloaded zip file for Satellite 6_6 workaround"
+  block: 
+    - name: "Update all packages using mounted ISO files"
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop:
+         - unzip
+         - zip
+         - vim
+
+    - name: "Extract Downloaded zip file for Satellite 6_6 workaround"
+      unarchive:
+        src: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
+        dest: "{{ satellite_6_6_workaround_extracted_dir }}"
+        remote_src: yes
+
+    - name: "Copy repo file from Satellite 6_6 workaround to /etc/yum.repos.d/"
+      copy:
+        src: "{{ satellite_6_6_workaround_extracted_dir }}/{{ satellite_6_6_workaround_extracted_dir_name }}/{{ satellite_6_6_workaround_yumrepofile }}"
+        dest: "/etc/yum.repos.d/{{ satellite_6_6_workaround_yumrepofile }}"
+        remote_src: yes
+  when:
+    - sat66workaround.stat.exists == true
+    - "satellite_version == '6.6'"
+    - "satellite_workaround == 'yes'"
+    - "satellite_disconnected == 'yes'"
 
 # System must be updated to latest level.
 - name: "Update all packages using mounted ISO files"
