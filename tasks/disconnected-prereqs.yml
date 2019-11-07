@@ -67,7 +67,7 @@
     dest: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
     mode: '0755'
   when: 
-    - "satellite_version == '6.6'"
+    - "satellite_version == 6.6"
     - "satellite_workaround == 'yes'"
     - "satellite_disconnected == 'yes'"
     - "satellite_pull_from_webserver == 'yes'"
@@ -99,7 +99,7 @@
     dest: "{{ satellite_rhel_iso_dest_dir }}/{{ satellite_6_6_workaround_zipname }}"
     mode: '0755'
   when: 
-    - "satellite_version == '6.6'"
+    - "satellite_version == 6.6"
     - "satellite_workaround == 'yes'"
     - "satellite_disconnected == 'yes'"
     - "satellite_pull_from_webserver == 'no'"
@@ -252,7 +252,7 @@
         remote_src: yes
   when:
     - sat66workaround.stat.exists == true
-    - "satellite_version == '6.6'"
+    - "satellite_version == 6.6"
     - "satellite_workaround == 'yes'"
     - "satellite_disconnected == 'yes'"
 
