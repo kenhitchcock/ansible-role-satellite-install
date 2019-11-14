@@ -12,7 +12,7 @@
     - name: "Pre Reqs required to install satellite in connected mode."
       include_tasks: "connected-prereq.yml"
       when:
-        - "satellite_disconnected == 'yes'" 
+        - "satellite_disconnected == 'no'" 
         - "satellite_scenario == 'satellite'"
 
     - name: "Running the satellite installation."

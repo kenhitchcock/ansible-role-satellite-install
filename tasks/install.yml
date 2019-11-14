@@ -4,7 +4,7 @@
   set_fact:
     satellite_install_cmd: ""
     satellite_install_extra_args: ""
-
+    
 - name: "Debugging string"
   debug:
     msg: "{{ satellite_deployment_installer_cmd }}"
@@ -22,32 +22,15 @@
   debug:
     msg: "{{ satellite_install_cmd }}"
 
+- name: "Delete any previous log file"
+  file:
+    path: "{{ satellite_output_logfile }}"
+    state: absent
+
 - name: "Satellite 6 installation"
-  command: "{{ satellite_install_cmd }}"
+  command: "{{ satellite_install_cmd }} >>{{ satellite_output_logfile }}"
   register: satinstalloutput
 
-
-#- name: "Install Satellite older than 6.6 with default parameters"
-#  command: > 
-#    satellite-installer 
-#      --scenario "{{ satellite_scenario }}" 
-#      --foreman-initial-organization "{{ satellite_organization }}"
-#      --foreman-initial-location "{{ satellite_location }}"
-#      --foreman-admin-username "{{ satellite_username }}"
-#      --foreman-admin-password "{{ satellite_password }}"
-#      "{{ satellite_install_cmd }}"
-#  register: satinstalloutput
-#  when:
-#    - satellite_version|float < 6.6
-
-#- name: "Install Satellite 6.6 with default parameters"
-#  command: > 
-#    satellite-installer 
-#      --scenario "{{ satellite_scenario }}" 
-#      "{{ satellite_install_cmd }}"
-#  register: satinstalloutput
-#  when:
-#   - satellite_version|float >= 6.6
 
 #- name: "Output from installer"
 #  debug:

@@ -1,5 +1,6 @@
 ---
 satellite_version: 6.6
+satellite_output_logfile: /root/satellite_install.log
 satellite_disconnected: 'no'
 satellite_iso_name: 'satellite-6.6.0-rhel-7-x86_64-dvd.iso'
 satellite_rhel_iso_name: 'rhel-server-7.7-x86_64-dvd.iso'
